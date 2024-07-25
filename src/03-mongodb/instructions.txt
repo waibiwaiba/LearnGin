@@ -8,3 +8,8 @@ docker exec –it CONTAINER_ID bash
     exit
 docker run -d --name redisinsight --link redis -p 23785:23785 redislabs/redisinsight
     http://localhost:23785
+
+git checkout -b feature/redis_integration
+git add .
+git commit –m "added redis integration"
+git push origin feature/redis_integration
