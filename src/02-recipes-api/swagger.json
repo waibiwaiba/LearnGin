@@ -31,12 +31,7 @@
         "tags": [
           "recipes"
         ],
-        "operationId": "listRecipes",
-        "responses": {
-          "200": {
-            "description": "Successful operation"
-          }
-        }
+        "operationId": "listRecipes"
       },
       "post": {
         "description": "Create a new recipe",
@@ -88,15 +83,7 @@
             "name": "publishedAt",
             "in": "query"
           }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful operation"
-          },
-          "400": {
-            "description": "Invalid input"
-          }
-        }
+        ]
       }
     },
     "/recipes/search": {
@@ -117,12 +104,7 @@
             "in": "query",
             "required": true
           }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful operation"
-          }
-        }
+        ]
       }
     },
     "/recipes/{id}": {
@@ -143,15 +125,7 @@
             "in": "path",
             "required": true
           }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful operation"
-          },
-          "404": {
-            "description": "Invalid recipe ID"
-          }
-        }
+        ]
       },
       "put": {
         "description": "Update an existing recipe",
@@ -170,18 +144,7 @@
             "in": "path",
             "required": true
           }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful operation"
-          },
-          "400": {
-            "description": "Invalid input"
-          },
-          "404": {
-            "description": "Invalid recipe ID"
-          }
-        }
+        ]
       },
       "delete": {
         "description": "Delete an existing recipe",
@@ -200,15 +163,7 @@
             "in": "path",
             "required": true
           }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful operation"
-          },
-          "404": {
-            "description": "Invalid recipe ID"
-          }
-        }
+        ]
       }
     }
   }
