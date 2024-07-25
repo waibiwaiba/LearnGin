@@ -1,0 +1,2 @@
+$env:MONGO_DATABASE="demo"
+$env:MONGO_URI="mongodb://admin:password@localhost:27017/test?authSource=admin"
