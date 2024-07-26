@@ -1,5 +1,7 @@
 $env:MONGO_DATABASE="demo"
 $env:MONGO_URI="mongodb://admin:password@localhost:27017/test?authSource=admin"
+$env:X_API_KEY="eUbP9shywUygMx7u"
+$env:JWT_SECRET="eUbP9shywUygMx7u"
 docker run -d -v ./redis.conf:/usr/local/etc/redis --name redis -p 6379:6379 redis:6.0
 
 docker ps
