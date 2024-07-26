@@ -7,7 +7,10 @@ import (
 	"log"
 	"os"
 
+	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
+
+	myredis "github.com/gin-contrib/sessions/redis"
 	"github.com/go-redis/redis/v8"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -15,6 +18,17 @@ import (
 )
 
 var recipesHandler *handlers.RecipesHandler
+var authHandler *handlers.AuthHandler
+
+func AuthMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		if c.GetHeader("X-API-KEY") !=
+			os.Getenv("X_API_KEY") {
+			c.AbortWithStatus(401)
+		}
+		c.Next()
+	}
+}
 
 func init() {
 	ctx := context.Background()
@@ -24,6 +38,8 @@ func init() {
 		log.Fatal(err)
 	}
 	log.Println("Connected to MongoDB")
+	collectionUsers := client.Database(os.Getenv("MONGO_DATABASE")).Collection("users")
+	authHandler = handlers.NewAuthHandler(ctx, collectionUsers)
 	collection := client.Database(os.Getenv("MONGO_DATABASE")).Collection("recipes")
 
 	redisClient := redis.NewClient(&redis.Options{
@@ -34,12 +50,21 @@ func init() {
 	status := redisClient.Ping(ctx)
 	fmt.Println(status)
 	recipesHandler = handlers.NewRecipesHandler(ctx, collection, redisClient)
+
 }
 
 func main() {
 	router := gin.Default()
-	router.POST("/recipes", recipesHandler.NewRecipeHandler)
+	store, _ := myredis.NewStore(10, "tcp", "localhost:6379", "", []byte("secret"))
+	router.Use(sessions.Sessions("recipes_api", store))
 	router.GET("/recipes", recipesHandler.ListRecipesHandler)
-	router.PUT("/recipes/:id", recipesHandler.UpdateRecipeHandler)
+	router.POST("/signin", authHandler.SignInHandler)
+	router.POST("/refresh", authHandler.RefreshHandler)
+	router.POST("/signout", authHandler.SignOutHandler)
+	authorized := router.Group("/")
+	authorized.Use(AuthMiddleware())
+	authorized.POST("/recipes", recipesHandler.NewRecipeHandler)
+	authorized.PUT("/recipes/:id", recipesHandler.UpdateRecipeHandler)
+	authorized.DELETE("/recipes/:id", recipesHandler.DeleteRecipeHandler)
 	router.Run()
 }
